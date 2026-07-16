@@ -1,0 +1,14 @@
+# robots.txt for TechVault PC Store
+# https://www.techvaultstore.com
+
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /admin.css
+Disallow: /admin.js
+
+# Sitemap
+Sitemap: https://www.techvaultstore.com/sitemap.xml
+
+# Crawl-delay (optional, for polite bots)
+# Crawl-delay: 10

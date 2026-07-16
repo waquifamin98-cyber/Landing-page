@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse our full catalog of PC components, gaming peripherals, cooling solutions, motherboards, cases and power supplies from top brands.">
+    <meta name="robots" content="index, follow">
+    <title>Products | TechVault PC Store</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Products | TechVault PC Store">
+    <meta property="og:description" content="Browse our full catalog of PC components from Havit, Deepcool, MSI, Antec, and Gigabyte.">
+    <meta property="og:type" content="website">
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- BreadcrumbList Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.techvaultstore.com/" },
+            { "@type": "ListItem", "position": 2, "name": "Products", "item": "https://www.techvaultstore.com/products.html" }
+        ]
+    }
+    </script>
+</head>
+<body>
+
+    <!-- ======================== NAVBAR ======================== -->
+    <header class="navbar" id="navbar">
+        <div class="navbar__container">
+            <a href="index.html" class="navbar__logo">
+                <span class="logo-icon">&#9889;</span>
+                <span class="logo-text">Tech<span class="logo-accent">Vault</span></span>
+            </a>
+
+            <div class="navbar__search" id="navSearch">
+                <input type="text" id="searchInput" placeholder="Search products, brands..." autocomplete="off">
+                <button class="search-btn" id="searchBtn" aria-label="Search">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </button>
+                <div class="search-dropdown" id="searchDropdown"></div>
+            </div>
+
+            <nav class="navbar__nav" id="mainNav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="products.html" class="nav-link active">Products</a>
+                <a href="products.html?cat=cooling" class="nav-link">Cooling</a>
+                <a href="products.html?cat=peripherals" class="nav-link">Peripherals</a>
+                <a href="products.html?cat=motherboards" class="nav-link">Motherboards</a>
+                <a href="products.html?cat=cases" class="nav-link">Cases</a>
+                <a href="products.html?cat=psu" class="nav-link">PSU</a>
+            </nav>
+
+            <div class="navbar__actions">
+                <button class="cart-toggle" id="cartToggle" aria-label="Shopping Cart">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    <span class="cart-count" id="cartCount">0</span>
+                </button>
+                <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="mobile-nav" id="mobileNav">
+            <a href="index.html" class="mobile-nav__link">Home</a>
+            <a href="products.html" class="mobile-nav__link active">All Products</a>
+            <a href="products.html?cat=cooling" class="mobile-nav__link">Cooling</a>
+            <a href="products.html?cat=peripherals" class="mobile-nav__link">Peripherals</a>
+            <a href="products.html?cat=motherboards" class="mobile-nav__link">Motherboards</a>
+            <a href="products.html?cat=cases" class="mobile-nav__link">Cases</a>
+            <a href="products.html?cat=psu" class="mobile-nav__link">Power Supplies</a>
+        </div>
+    </header>
+
+    <!-- ======================== CART DRAWER ======================== -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer__header">
+            <h3>Shopping Cart</h3>
+            <button class="cart-drawer__close" id="cartClose" aria-label="Close cart">&times;</button>
+        </div>
+        <div class="cart-drawer__items" id="cartItems">
+            <p class="cart-empty">Your cart is empty</p>
+        </div>
+        <div class="cart-drawer__footer" id="cartFooter" style="display:none;">
+            <div class="cart-drawer__subtotal">
+                <span>Subtotal:</span>
+                <span id="cartSubtotal">৳0</span>
+            </div>
+            <a href="checkout.html" class="btn btn--primary btn--full">Proceed to Checkout</a>
+            <button class="btn btn--outline btn--full" id="clearCartBtn">Clear Cart</button>
+        </div>
+    </aside>
+
+    <!-- ======================== MAIN CONTENT ======================== -->
+    <main class="products-page">
+
+        <!-- Page Header -->
+        <div class="products-page__header container">
+            <h1 class="products-page__title" id="pageTitle">All Products</h1>
+            <p class="products-page__count" id="productCount">Loading products...</p>
+        </div>
+
+        <!-- Filters + Products Grid -->
+        <div class="container">
+            <div class="products-layout">
+
+                <!-- Filters Sidebar -->
+                <aside class="filters-panel" id="filtersPanel">
+                    <!-- Category Filter -->
+                    <div class="filter-group">
+                        <h4>Category</h4>
+                        <label class="filter-option">
+                            <input type="checkbox" name="category" value="all" checked> All Categories
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="category" value="cooling"> Cooling
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="category" value="peripherals"> Peripherals
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="category" value="motherboards"> Motherboards
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="category" value="cases"> Cases
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="category" value="psu"> Power Supplies
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="category" value="cables"> Accessories
+                        </label>
+                    </div>
+
+                    <!-- Brand Filter -->
+                    <div class="filter-group">
+                        <h4>Brand</h4>
+                        <label class="filter-option">
+                            <input type="checkbox" name="brand" value="all" checked> All Brands
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="brand" value="Havit"> Havit
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="brand" value="Deepcool"> Deepcool
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="brand" value="MSI"> MSI
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="brand" value="Antec"> Antec
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="brand" value="Gigabyte"> Gigabyte
+                        </label>
+                    </div>
+
+                    <!-- Price Filter -->
+                    <div class="filter-group">
+                        <h4>Price Range</h4>
+                        <label class="filter-option">
+                            <input type="radio" name="price" value="all" checked> All Prices
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="price" value="0-5000"> Under ৳5,000
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="price" value="5000-10000"> ৳5,000 - ৳10,000
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="price" value="10000-20000"> ৳10,000 - ৳20,000
+                        </label>
+                        <label class="filter-option">
+                            <input type="radio" name="price" value="20000+"> ৳20,000+
+                        </label>
+                    </div>
+
+                    <!-- Special Filters -->
+                    <div class="filter-group">
+                        <h4>Availability</h4>
+                        <label class="filter-option">
+                            <input type="checkbox" id="filterOnSale"> On Sale Only
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" id="filterInStock"> In Stock Only
+                        </label>
+                    </div>
+                </aside>
+
+                <!-- Products Area -->
+                <div>
+                    <!-- Sort Bar -->
+                    <div class="sort-bar">
+                        <span id="resultsText">Showing all products</span>
+                        <select id="sortSelect">
+                            <option value="default">Sort by: Featured</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="name">Name: A-Z</option>
+                            <option value="newest">Newest First</option>
+                        </select>
+                    </div>
+
+                    <!-- Product Grid -->
+                    <div class="products-grid" id="productsGrid">
+                        <!-- Rendered by JavaScript -->
+                    </div>
+
+                    <!-- No Results -->
+                    <div id="noResults" style="display:none; text-align:center; padding:60px 20px;">
+                        <p style="font-size:1.2rem; color:var(--text-muted);">No products match your filters.</p>
+                        <button class="btn btn--outline" onclick="resetFilters()" style="margin-top:16px;">Reset Filters</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ======================== FOOTER ======================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__grid">
+                <div class="footer__col">
+                    <a href="index.html" class="footer__logo">
+                        <span class="logo-icon">&#9889;</span>
+                        <span class="logo-text">Tech<span class="logo-accent">Vault</span></span>
+                    </a>
+                    <p class="footer__desc">Your trusted source for premium PC components and gaming hardware.</p>
+                </div>
+                <div class="footer__col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="products.html">All Products</a></li>
+                        <li><a href="products.html?filter=sale">Sale Items</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Categories</h4>
+                    <ul>
+                        <li><a href="products.html?cat=cooling">Cooling</a></li>
+                        <li><a href="products.html?cat=peripherals">Peripherals</a></li>
+                        <li><a href="products.html?cat=motherboards">Motherboards</a></li>
+                        <li><a href="products.html?cat=cases">Cases</a></li>
+                        <li><a href="products.html?cat=psu">Power Supplies</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Contact</h4>
+                    <address class="footer__address">
+                        <p>Agrabad, Chittagong 4100</p>
+                        <p><a href="tel:+8801575666801">+880-1575-666-801</a></p>
+                        <p><a href="mailto:waquifamin98@gmail.com">waquifamin98@gmail.com</a></p>
+                    </address>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2026 TechVault PC Store. All rights reserved.</p>
+                <div class="footer__legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ======================== SCRIPTS ======================== -->
+    <script src="script.js"></script>
+    <script>
+        /* ============================================================
+           Products Page - Filtering, Sorting, and URL Parameter Handling
+           ============================================================ */
+
+        /* --- State --- */
+        let currentFilters = {
+            categories: [],
+            brands: [],
+            priceRange: 'all',
+            onSale: false,
+            inStock: false,
+            search: '',
+            sort: 'default'
+        };
+
+        /* --- Parse URL parameters on load --- */
+        function parseURLParams() {
+            const params = new URLSearchParams(window.location.search);
+
+            // Category from URL
+            const cat = params.get('cat');
+            if (cat) {
+                currentFilters.categories = [cat];
+                document.querySelectorAll('input[name="category"]').forEach(cb => {
+                    cb.checked = (cb.value === cat);
+                });
+                updatePageTitle(cat.charAt(0).toUpperCase() + cat.slice(1));
+            }
+
+            // Brand from URL
+            const brand = params.get('brand');
+            if (brand) {
+                currentFilters.brands = [brand];
+                document.querySelectorAll('input[name="brand"]').forEach(cb => {
+                    cb.checked = (cb.value === brand);
+                });
+                updatePageTitle(brand + ' Products');
+            }
+
+            // Search from URL
+            const search = params.get('search');
+            if (search) {
+                currentFilters.search = search;
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) searchInput.value = search;
+                updatePageTitle('Search: "' + search + '"');
+            }
+
+            // Sale filter
+            const filter = params.get('filter');
+            if (filter === 'sale') {
+                currentFilters.onSale = true;
+                document.getElementById('filterOnSale').checked = true;
+                updatePageTitle('Sale Items');
+            } else if (filter === 'featured') {
+                // Handled during render
+                updatePageTitle('Featured Products');
+            }
+
+            // Product detail
+            const productId = params.get('id');
+            if (productId) {
+                showProductDetail(productId);
+                return; // Don't render grid
+            }
+        }
+
+        function updatePageTitle(title) {
+            const el = document.getElementById('pageTitle');
+            if (el) el.textContent = title;
+            document.title = title + ' | TechVault PC Store';
+        }
+
+        /* --- Apply all filters and render --- */
+        function applyFilters() {
+            let products = ProductStore.getAll();
+
+            // Category filter
+            if (currentFilters.categories.length > 0 && !currentFilters.categories.includes('all')) {
+                products = products.filter(p => currentFilters.categories.includes(p.category));
+            }
+
+            // Brand filter
+            if (currentFilters.brands.length > 0 && !currentFilters.brands.includes('all')) {
+                products = products.filter(p => currentFilters.brands.includes(p.brand));
+            }
+
+            // Price filter
+            if (currentFilters.priceRange !== 'all') {
+                const [min, max] = currentFilters.priceRange.split('-').map(v => v === '+' ? Infinity : parseInt(v));
+                products = products.filter(p => {
+                    if (currentFilters.priceRange === '20000+') return p.price >= 20000;
+                    return p.price >= min && p.price <= max;
+                });
+            }
+
+            // On sale filter
+            if (currentFilters.onSale) {
+                products = products.filter(p => p.onSale);
+            }
+
+            // In stock filter
+            if (currentFilters.inStock) {
+                products = products.filter(p => p.stock > 0);
+            }
+
+            // Search filter
+            if (currentFilters.search) {
+                const q = currentFilters.search.toLowerCase();
+                products = products.filter(p =>
+                    p.name.toLowerCase().includes(q) ||
+                    p.brand.toLowerCase().includes(q) ||
+                    p.category.toLowerCase().includes(q)
+                );
+            }
+
+            // Sorting
+            switch (currentFilters.sort) {
+                case 'price-low':
+                    products.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    products.sort((a, b) => b.price - a.price);
+                    break;
+                case 'rating':
+                    products.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'name':
+                    products.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'newest':
+                    products.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                    break;
+                default:
+                    // Featured first, then by date
+                    products.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+            }
+
+            renderProducts(products);
+        }
+
+        /* --- Render products to grid --- */
+        function renderProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            const noResults = document.getElementById('noResults');
+            const countEl = document.getElementById('productCount');
+            const resultsText = document.getElementById('resultsText');
+
+            if (!grid) return;
+
+            if (products.length === 0) {
+                grid.innerHTML = '';
+                if (noResults) noResults.style.display = 'block';
+                if (countEl) countEl.textContent = '0 products found';
+                if (resultsText) resultsText.textContent = 'No results';
+                return;
+            }
+
+            if (noResults) noResults.style.display = 'none';
+            if (countEl) countEl.textContent = `${products.length} product${products.length !== 1 ? 's' : ''} found`;
+            if (resultsText) resultsText.textContent = `Showing ${products.length} product${products.length !== 1 ? 's' : ''}`;
+
+            grid.innerHTML = products.map(p => renderProductCard(p)).join('');
+            observeFadeInElements();
+        }
+
+        /* --- Show product detail (single product view) --- */
+        function showProductDetail(productId) {
+            const product = ProductStore.getById(productId);
+            if (!product) {
+                window.location.href = 'products.html';
+                return;
+            }
+
+            const grid = document.getElementById('productsGrid');
+            const noResults = document.getElementById('noResults');
+            if (noResults) noResults.style.display = 'none';
+
+            // Update title
+            updatePageTitle(product.name);
+
+            // Show single product in the grid area
+            if (grid) {
+                grid.style.gridTemplateColumns = '1fr';
+                grid.innerHTML = renderProductCard(product);
+            }
+        }
+
+        /* --- Reset all filters --- */
+        function resetFilters() {
+            currentFilters = {
+                categories: [],
+                brands: [],
+                priceRange: 'all',
+                onSale: false,
+                inStock: false,
+                search: '',
+                sort: 'default'
+            };
+
+            document.querySelectorAll('input[name="category"]').forEach((cb, i) => cb.checked = i === 0);
+            document.querySelectorAll('input[name="brand"]').forEach((cb, i) => cb.checked = i === 0);
+            document.querySelectorAll('input[name="price"]').forEach((rb, i) => rb.checked = i === 0);
+            document.getElementById('filterOnSale').checked = false;
+            document.getElementById('filterInStock').checked = false;
+            document.getElementById('sortSelect').value = 'default';
+
+            updatePageTitle('All Products');
+            applyFilters();
+        }
+
+        /* --- Bind filter events --- */
+        function initFilters() {
+            // Category checkboxes
+            document.querySelectorAll('input[name="category"]').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    if (cb.value === 'all') {
+                        document.querySelectorAll('input[name="category"]').forEach(c => c.checked = false);
+                        cb.checked = true;
+                        currentFilters.categories = [];
+                    } else {
+                        document.querySelector('input[name="category"][value="all"]').checked = false;
+                        currentFilters.categories = Array.from(
+                            document.querySelectorAll('input[name="category"]:checked')
+                        ).map(c => c.value);
+                        if (currentFilters.categories.length === 0) {
+                            document.querySelector('input[name="category"][value="all"]').checked = true;
+                        }
+                    }
+                    applyFilters();
+                });
+            });
+
+            // Brand checkboxes
+            document.querySelectorAll('input[name="brand"]').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    if (cb.value === 'all') {
+                        document.querySelectorAll('input[name="brand"]').forEach(c => c.checked = false);
+                        cb.checked = true;
+                        currentFilters.brands = [];
+                    } else {
+                        document.querySelector('input[name="brand"][value="all"]').checked = false;
+                        currentFilters.brands = Array.from(
+                            document.querySelectorAll('input[name="brand"]:checked')
+                        ).map(c => c.value);
+                        if (currentFilters.brands.length === 0) {
+                            document.querySelector('input[name="brand"][value="all"]').checked = true;
+                        }
+                    }
+                    applyFilters();
+                });
+            });
+
+            // Price radio buttons
+            document.querySelectorAll('input[name="price"]').forEach(rb => {
+                rb.addEventListener('change', () => {
+                    currentFilters.priceRange = rb.value;
+                    applyFilters();
+                });
+            });
+
+            // Special filters
+            document.getElementById('filterOnSale')?.addEventListener('change', (e) => {
+                currentFilters.onSale = e.target.checked;
+                applyFilters();
+            });
+
+            document.getElementById('filterInStock')?.addEventListener('change', (e) => {
+                currentFilters.inStock = e.target.checked;
+                applyFilters();
+            });
+
+            // Sort dropdown
+            document.getElementById('sortSelect')?.addEventListener('change', (e) => {
+                currentFilters.sort = e.target.value;
+                applyFilters();
+            });
+        }
+
+        /* --- Initialize products page --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            parseURLParams();
+            initFilters();
+            applyFilters();
+        });
+    </script>
+</body>
+</html>

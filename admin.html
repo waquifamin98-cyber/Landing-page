@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Panel | TechVault PC Store</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- ============================================================
+         LOGIN SCREEN
+         ============================================================ -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-card__header">
+                <span class="login-logo">&#9889;</span>
+                <h1>TechVault <span class="accent">Admin</span></h1>
+                <p>Sign in to manage your store</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="loginUser">Username</label>
+                    <input type="text" id="loginUser" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPass">Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter password" required>
+                </div>
+                <div class="login-error" id="loginError"></div>
+                <button type="submit" class="btn btn--primary btn--full">Sign In</button>
+                <p class="login-hint">Default: admin / admin123</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         ADMIN DASHBOARD (hidden until logged in)
+         ============================================================ -->
+    <div class="admin-app" id="adminApp" style="display:none;">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar__header">
+                <span class="login-logo">&#9889;</span>
+                <span class="sidebar__brand">Tech<span class="accent">Vault</span></span>
+            </div>
+            <nav class="sidebar__nav">
+                <button class="sidebar__link active" data-tab="dashboard">
+                    <span class="sidebar__icon">&#128200;</span> Dashboard
+                </button>
+                <button class="sidebar__link" data-tab="products">
+                    <span class="sidebar__icon">&#128230;</span> Products
+                </button>
+                <button class="sidebar__link" data-tab="add-product">
+                    <span class="sidebar__icon">&#10133;</span> Add Product
+                </button>
+                <button class="sidebar__link" data-tab="orders">
+                    <span class="sidebar__icon">&#128203;</span> Orders
+                </button>
+            </nav>
+            <div class="sidebar__footer">
+                <a href="index.html" class="sidebar__link" target="_blank">
+                    <span class="sidebar__icon">&#127760;</span> View Store
+                </a>
+                <button class="sidebar__link" id="logoutBtn">
+                    <span class="sidebar__icon">&#128682;</span> Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-main">
+
+            <!-- Top Bar -->
+            <header class="admin-topbar">
+                <button class="sidebar-toggle" id="sidebarToggle">&#9776;</button>
+                <h2 class="admin-topbar__title" id="adminPageTitle">Dashboard</h2>
+                <div class="admin-topbar__actions">
+                    <a href="index.html" target="_blank" class="btn btn--outline btn--sm">View Store</a>
+                </div>
+            </header>
+
+            <!-- ==================== DASHBOARD TAB ==================== -->
+            <section class="admin-tab active" id="tab-dashboard">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card__icon stat-card__icon--blue">&#128230;</div>
+                        <div class="stat-card__info">
+                            <h3 id="statTotalProducts">0</h3>
+                            <p>Total Products</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon stat-card__icon--green">&#128176;</div>
+                        <div class="stat-card__info">
+                            <h3 id="statTotalValue">৳0</h3>
+                            <p>Inventory Value</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon stat-card__icon--orange">&#9888;</div>
+                        <div class="stat-card__info">
+                            <h3 id="statLowStock">0</h3>
+                            <p>Low Stock Items</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon stat-card__icon--purple">&#11088;</div>
+                        <div class="stat-card__info">
+                            <h3 id="statFeatured">0</h3>
+                            <p>Featured Products</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Low Stock Alerts Table -->
+                <div class="admin-card">
+                    <h3 class="admin-card__title">Low Stock Alerts (less than 10 units)</h3>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="lowStockTable">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Brand</th>
+                                    <th>Stock</th>
+                                    <th>Price</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lowStockBody">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Products -->
+                <div class="admin-card">
+                    <h3 class="admin-card__title">Recent Products</h3>
+                    <div class="table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Brand</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Featured</th>
+                                    <th>Sale</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentProductsBody">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== PRODUCTS TAB ==================== -->
+            <section class="admin-tab" id="tab-products">
+                <div class="admin-card">
+                    <div class="admin-card__header">
+                        <h3 class="admin-card__title">All Products</h3>
+                        <div class="admin-card__actions">
+                            <input type="text" class="admin-search" id="productSearch" placeholder="Search products...">
+                            <select class="admin-select" id="categoryFilter">
+                                <option value="all">All Categories</option>
+                                <option value="cooling">Cooling</option>
+                                <option value="peripherals">Peripherals</option>
+                                <option value="motherboards">Motherboards</option>
+                                <option value="cases">Cases</option>
+                                <option value="psu">Power Supplies</option>
+                                <option value="cables">Accessories</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Brand</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Featured</th>
+                                    <th>Sale</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== ADD/EDIT PRODUCT TAB ==================== -->
+            <section class="admin-tab" id="tab-add-product">
+                <div class="admin-card">
+                    <h3 class="admin-card__title" id="formTitle">Add New Product</h3>
+                    <form class="product-form" id="productForm">
+                        <input type="hidden" id="editProductId" value="">
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="prodName">Product Name *</label>
+                                <input type="text" id="prodName" required placeholder="e.g. MSI MAG B660 TOMAHAWK">
+                            </div>
+                            <div class="form-group">
+                                <label for="prodBrand">Brand *</label>
+                                <select id="prodBrand" required>
+                                    <option value="">Select brand</option>
+                                    <option value="Havit">Havit</option>
+                                    <option value="Deepcool">Deepcool</option>
+                                    <option value="MSI">MSI</option>
+                                    <option value="Antec">Antec</option>
+                                    <option value="Gigabyte">Gigabyte</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="prodCategory">Category *</label>
+                                <select id="prodCategory" required>
+                                    <option value="">Select category</option>
+                                    <option value="cooling">Cooling</option>
+                                    <option value="peripherals">Peripherals</option>
+                                    <option value="motherboards">Motherboards</option>
+                                    <option value="cases">Cases</option>
+                                    <option value="psu">Power Supplies</option>
+                                    <option value="cables">Accessories</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prodPrice">Price ($) *</label>
+                                <input type="number" id="prodPrice" step="0.01" min="0" required placeholder="0.00">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="prodOriginalPrice">Original Price ($)</label>
+                                <input type="number" id="prodOriginalPrice" step="0.01" min="0" placeholder="Leave blank if none">
+                            </div>
+                            <div class="form-group">
+                                <label for="prodStock">Stock Quantity *</label>
+                                <input type="number" id="prodStock" min="0" required placeholder="0">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="prodRating">Rating (0-5)</label>
+                                <input type="number" id="prodRating" step="0.1" min="0" max="5" placeholder="4.5">
+                            </div>
+                            <div class="form-group">
+                                <label for="prodRatingCount">Rating Count</label>
+                                <input type="number" id="prodRatingCount" min="0" placeholder="0">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prodImage">Image URL</label>
+                            <input type="text" id="prodImage" placeholder="images/products/your-image.jpg">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="prodDesc">Description</label>
+                            <textarea id="prodDesc" rows="3" placeholder="Product description..."></textarea>
+                        </div>
+
+                        <div class="form-row form-checkboxes">
+                            <label class="form-checkbox">
+                                <input type="checkbox" id="prodFeatured"> Featured Product
+                            </label>
+                            <label class="form-checkbox">
+                                <input type="checkbox" id="prodOnSale"> On Sale
+                            </label>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--primary" id="formSubmitBtn">Add Product</button>
+                            <button type="button" class="btn btn--outline" id="formCancelBtn" style="display:none;">Cancel Edit</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ==================== ORDERS TAB ==================== -->
+            <section class="admin-tab" id="tab-orders">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-card__icon stat-card__icon--blue">&#128203;</div>
+                        <div class="stat-card__info">
+                            <h3 id="statTotalOrders">0</h3>
+                            <p>Total Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon stat-card__icon--orange">&#9203;</div>
+                        <div class="stat-card__info">
+                            <h3 id="statPendingOrders">0</h3>
+                            <p>Pending Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon stat-card__icon--green">&#128176;</div>
+                        <div class="stat-card__info">
+                            <h3 id="statOrderRevenue">৳0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card__icon stat-card__icon--purple">&#9989;</div>
+                        <div class="stat-card__info">
+                            <h3 id="statDeliveredOrders">0</h3>
+                            <p>Delivered</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card__header">
+                        <h3 class="admin-card__title">Orders</h3>
+                        <div class="admin-card__actions">
+                            <div class="order-filters" id="orderFilters">
+                                <button class="order-filter-btn active" data-status="all">All</button>
+                                <button class="order-filter-btn" data-status="pending">Pending</button>
+                                <button class="order-filter-btn" data-status="processing">Processing</button>
+                                <button class="order-filter-btn" data-status="shipped">Shipped</button>
+                                <button class="order-filter-btn" data-status="delivered">Delivered</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="admin-table" id="ordersTable">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Items</th>
+                                    <th>Total</th>
+                                    <th>Payment</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <!-- Filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal__header">
+                <h3>Edit Product</h3>
+                <button class="modal__close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal__body" id="modalBody">
+                <!-- Filled by JS with inline edit form -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== CONFIRM DELETE MODAL ======================== -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal modal--sm">
+            <div class="modal__header">
+                <h3>Confirm Delete</h3>
+                <button class="modal__close" id="deleteModalClose">&times;</button>
+            </div>
+            <div class="modal__body">
+                <p>Are you sure you want to delete <strong id="deleteProductName"></strong>?</p>
+                <p style="color:var(--text-muted); margin-top:8px; font-size:0.9rem;">This action cannot be undone.</p>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--outline btn--sm" id="deleteCancelBtn">Cancel</button>
+                <button class="btn btn--danger btn--sm" id="deleteConfirmBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notification container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ======================== ORDER DETAIL MODAL ======================== -->
+    <div class="modal-overlay" id="orderDetailModal">
+        <div class="modal modal--lg">
+            <div class="modal__header">
+                <h3 id="orderDetailTitle">Order Details</h3>
+                <button class="modal__close" id="orderDetailClose">&times;</button>
+            </div>
+            <div class="modal__body" id="orderDetailBody">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== SCRIPTS ======================== -->
+    <script src="admin.js"></script>
+</body>
+</html>

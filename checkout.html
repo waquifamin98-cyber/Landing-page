@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Checkout | TechVault PC Store</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ======================== NAVBAR ======================== -->
+    <header class="navbar" id="navbar">
+        <div class="navbar__container">
+            <a href="index.html" class="navbar__logo">
+                <span class="logo-icon">&#9889;</span>
+                <span class="logo-text">Tech<span class="logo-accent">Vault</span></span>
+            </a>
+            <div class="navbar__search" style="display:none;"></div>
+            <nav class="navbar__nav" id="mainNav"></nav>
+            <div class="navbar__actions">
+                <a href="index.html" class="btn btn--outline btn--sm">Continue Shopping</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- ======================== MAIN ======================== -->
+    <main class="checkout-page">
+        <div class="container">
+            <h1 class="checkout-page__title">Checkout</h1>
+
+            <div class="checkout-layout">
+                <!-- Checkout Form -->
+                <div>
+                    <form class="checkout-form" id="checkoutForm">
+                        <h3 style="margin-bottom:20px;">Shipping Information</h3>
+
+                        <div class="checkout-form__row">
+                            <div class="checkout-form__group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" required>
+                            </div>
+                            <div class="checkout-form__group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" required>
+                            </div>
+                        </div>
+
+                        <div class="checkout-form__group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" required>
+                        </div>
+
+                        <div class="checkout-form__group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+
+                        <div class="checkout-form__group">
+                            <label for="address">Street Address *</label>
+                            <input type="text" id="address" required>
+                        </div>
+
+                        <div class="checkout-form__row">
+                            <div class="checkout-form__group">
+                                <label for="city">City *</label>
+                                <input type="text" id="city" required>
+                            </div>
+                            <div class="checkout-form__group">
+                                <label for="state">State *</label>
+                                <input type="text" id="state" required>
+                            </div>
+                        </div>
+
+                        <div class="checkout-form__row">
+                            <div class="checkout-form__group">
+                                <label for="zip">ZIP Code *</label>
+                                <input type="text" id="zip" required>
+                            </div>
+                            <div class="checkout-form__group">
+                                <label for="country">Country *</label>
+                                <select id="country" required>
+                                    <option value="BD" selected>Bangladesh</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h3 style="margin: 32px 0 20px;">Payment Method</h3>
+
+                        <div class="payment-methods">
+                            <label class="payment-method active">
+                                <input type="radio" name="payment" value="credit" checked>
+                                <span>Credit / Debit Card</span>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="payment" value="paypal">
+                                <span>PayPal</span>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="payment" value="cod">
+                                <span>Cash on Delivery</span>
+                            </label>
+                        </div>
+
+                        <!-- Card fields (shown for credit card) -->
+                        <div id="cardFields" style="margin-top: 20px;">
+                            <div class="checkout-form__group">
+                                <label for="cardNumber">Card Number</label>
+                                <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+                            </div>
+                            <div class="checkout-form__row">
+                                <div class="checkout-form__group">
+                                    <label for="cardExpiry">Expiry Date</label>
+                                    <input type="text" id="cardExpiry" placeholder="MM/YY">
+                                </div>
+                                <div class="checkout-form__group">
+                                    <label for="cardCvv">CVV</label>
+                                    <input type="text" id="cardCvv" placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkout-form__group" style="margin-top: 20px;">
+                            <label for="orderNotes">Order Notes (optional)</label>
+                            <textarea id="orderNotes" rows="3" placeholder="Any special instructions..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn--primary btn--full btn--lg" style="margin-top:24px;">
+                            Place Order
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Order Summary -->
+                <div>
+                    <div class="checkout-summary" id="checkoutSummary">
+                        <h3>Order Summary</h3>
+                        <div id="summaryItems">
+                            <!-- Filled by JS -->
+                        </div>
+                        <div class="checkout-summary__total">
+                            <span>Total</span>
+                            <span id="summaryTotal">৳0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /* ======================== CHECKOUT PAGE LOGIC ======================== */
+
+        /* Load cart from shared localStorage key */
+        function getCartItems() {
+            return JSON.parse(localStorage.getItem('techvault_cart') || '[]');
+        }
+
+        function getAllProducts() {
+            return JSON.parse(localStorage.getItem('techvault_products') || '[]');
+        }
+
+        function getSubtotal() {
+            const items = getCartItems();
+            const products = getAllProducts();
+            return items.reduce((sum, item) => {
+                const product = products.find(p => p.id === item.productId);
+                return sum + (product ? product.price * item.qty : 0);
+            }, 0);
+        }
+
+        /* Render order summary */
+        function renderSummary() {
+            const items = getCartItems();
+            const products = getAllProducts();
+            const summaryEl = document.getElementById('summaryItems');
+            const totalEl = document.getElementById('summaryTotal');
+
+            if (items.length === 0) {
+                summaryEl.innerHTML = '<p style="color:var(--text-muted); padding:16px 0;">Your cart is empty. <a href="products.html" style="color:var(--accent-primary);">Continue shopping</a></p>';
+                totalEl.textContent = '৳0';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+            items.forEach(item => {
+                const product = products.find(p => p.id === item.productId);
+                if (!product) return;
+                const lineTotal = product.price * item.qty;
+                total += lineTotal;
+                html += `
+                    <div class="checkout-summary__item">
+                        <span>${product.name} x ${item.qty}</span>
+                        <span>৳${lineTotal.toLocaleString('en-IN')}</span>
+                    </div>`;
+            });
+
+            // Shipping
+            const shipping = total >= 9900 ? 0 : 999;
+            html += `
+                <div class="checkout-summary__item">
+                    <span>Shipping</span>
+                    <span>${shipping === 0 ? 'FREE' : '৳' + shipping.toLocaleString('en-IN')}</span>
+                </div>`;
+
+            total += shipping;
+            summaryEl.innerHTML = html;
+            totalEl.textContent = '৳' + total.toLocaleString('en-IN');
+        }
+
+        /* Payment method toggle */
+        document.querySelectorAll('.payment-method').forEach(pm => {
+            pm.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(p => p.classList.remove('active'));
+                pm.classList.add('active');
+                const cardFields = document.getElementById('cardFields');
+                if (pm.querySelector('input').value === 'credit') {
+                    cardFields.style.display = 'block';
+                } else {
+                    cardFields.style.display = 'none';
+                }
+            });
+        });
+
+        /* Form submission */
+        document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const items = getCartItems();
+            const products = getAllProducts();
+            const subtotal = getSubtotal();
+            const shipping = subtotal >= 9900 ? 0 : 999;
+            const total = subtotal + shipping;
+
+            const orderItems = items.map(item => {
+                const p = products.find(pr => pr.id === item.productId);
+                return p ? { name: p.name, brand: p.brand, price: p.price, qty: item.qty, image: p.image } : null;
+            }).filter(Boolean);
+
+            const payment = document.querySelector('.payment-method.active input')?.value || 'cod';
+
+            const order = {
+                id: 'ORD-' + Date.now(),
+                date: new Date().toISOString(),
+                status: 'pending',
+                customer: {
+                    firstName: document.getElementById('firstName').value.trim(),
+                    lastName: document.getElementById('lastName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    city: document.getElementById('city').value.trim(),
+                    state: document.getElementById('state').value.trim(),
+                    zip: document.getElementById('zip').value.trim(),
+                    country: document.getElementById('country').value
+                },
+                payment: payment,
+                items: orderItems,
+                subtotal: subtotal,
+                shipping: shipping,
+                total: total,
+                notes: document.getElementById('orderNotes').value.trim()
+            };
+
+            const orders = JSON.parse(localStorage.getItem('techvault_orders') || '[]');
+            orders.unshift(order);
+            localStorage.setItem('techvault_orders', JSON.stringify(orders));
+
+            localStorage.removeItem('techvault_cart');
+
+            document.querySelector('.checkout-layout').innerHTML = `
+                <div style="grid-column: 1/-1; text-align:center; padding:80px 20px;">
+                    <div style="font-size:4rem; margin-bottom:20px;">&#10003;</div>
+                    <h2 style="font-size:1.8rem; margin-bottom:12px;">Order Placed Successfully!</h2>
+                    <p style="color:var(--text-muted); margin-bottom:8px;">Order ID: <strong>${order.id}</strong></p>
+                    <p style="color:var(--text-muted); margin-bottom:24px;">Thank you for your order. We'll send a confirmation email shortly.</p>
+                    <a href="index.html" class="btn btn--primary">Back to Home</a>
+                </div>`;
+        });
+
+        /* Init */
+        document.addEventListener('DOMContentLoaded', renderSummary);
+    </script>
+
+</body>
+</html>
