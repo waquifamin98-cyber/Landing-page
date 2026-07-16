@@ -7,14 +7,22 @@
 /* This data seeds localStorage on first visit.
    Admin panel edits are saved to the same localStorage key. */
 
+const FEATURED_PRODUCT_UPDATES = {
+    hav001: { price: 12999, originalPrice: 14999, image: "images/products/havit-hv-kb435l.jpg" },
+    dee001: { price: 14999, originalPrice: 16999, image: "images/products/deepcool-ak620.jpg" },
+    msi001: { price: 34999, originalPrice: 39999, image: "images/products/msi-mag-b660.jpg" },
+    msi003: { price: 58999, originalPrice: 64999, image: "images/products/msi-mag274qrf.webp" },
+    ant001: { price: 10999, originalPrice: 12999, image: "images/products/antec-nx400.png" }
+};
+
 const DEFAULT_PRODUCTS = [
     {
         id: "hav001",
         name: "Havit HV-KB435L TKL Mechanical Keyboard",
         brand: "Havit",
         category: "peripherals",
-        price: 5499,
-        originalPrice: 7149,
+        price: 12999,
+        originalPrice: 14999,
         stock: 45,
         rating: 4.5,
         ratingCount: 287,
@@ -29,8 +37,8 @@ const DEFAULT_PRODUCTS = [
         name: "Deepcool AK620 CPU Air Cooler",
         brand: "Deepcool",
         category: "cooling",
-        price: 5499,
-        originalPrice: null,
+        price: 14999,
+        originalPrice: 16999,
         stock: 28,
         rating: 4.8,
         ratingCount: 512,
@@ -61,8 +69,8 @@ const DEFAULT_PRODUCTS = [
         name: "MSI MAG B660 TOMAHAWK WiFi Motherboard",
         brand: "MSI",
         category: "motherboards",
-        price: 19799,
-        originalPrice: 23099,
+        price: 34999,
+        originalPrice: 39999,
         stock: 16,
         rating: 4.7,
         ratingCount: 234,
@@ -93,8 +101,8 @@ const DEFAULT_PRODUCTS = [
         name: "MSI Optix MAG274QRF-QD 27\" Gaming Monitor",
         brand: "MSI",
         category: "peripherals",
-        price: 38499,
-        originalPrice: 43999,
+        price: 58999,
+        originalPrice: 64999,
         stock: 8,
         rating: 4.6,
         ratingCount: 312,
@@ -109,8 +117,8 @@ const DEFAULT_PRODUCTS = [
         name: "Antec NX400 ATX Mid-Tower Case",
         brand: "Antec",
         category: "cases",
-        price: 6599,
-        originalPrice: 8799,
+        price: 10999,
+        originalPrice: 12999,
         stock: 34,
         rating: 4.4,
         ratingCount: 198,
@@ -155,8 +163,19 @@ const ProductStore = {
         }
         try {
             const products = JSON.parse(stored);
-            if (products.length > 0 && !products[0].image.startsWith('images/products/')) {
+            if (products.length === 0) {
                 localStorage.setItem(this.STORAGE_KEY, JSON.stringify(DEFAULT_PRODUCTS));
+                return;
+            }
+
+            const updatedProducts = products.map(product => {
+                const updates = FEATURED_PRODUCT_UPDATES[product.id];
+                return updates ? { ...product, ...updates } : product;
+            });
+
+            const needsRefresh = updatedProducts.some((product, index) => JSON.stringify(product) !== JSON.stringify(products[index]));
+            if (needsRefresh) {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(updatedProducts));
             }
         } catch (e) {
             localStorage.setItem(this.STORAGE_KEY, JSON.stringify(DEFAULT_PRODUCTS));
